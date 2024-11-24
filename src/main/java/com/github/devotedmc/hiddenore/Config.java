@@ -1,12 +1,8 @@
 package com.github.devotedmc.hiddenore;
 
 import com.github.devotedmc.hiddenore.listeners.ConfigDeferralListener;
-import com.mineinabyss.components.layer.Layer;
-import com.mineinabyss.features.helpers.LayerUtilsKt;
-import com.mineinabyss.features.helpers.di.Features;
 import com.mineinabyss.geary.modules.Geary;
 import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
-import com.mineinabyss.geary.papermc.tracking.blocks.BlockTrackingKt;
 import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
 import org.bukkit.Location;
@@ -33,8 +29,6 @@ public final class Config {
 
 	public static Config instance;
 	public static boolean isDebug;
-	public static LayerNameSupplier layerNameSupplier;
-
 	public String defaultPrefix;
 	public boolean alertUser;
 	public boolean listDrops;
@@ -105,8 +99,6 @@ public final class Config {
 		mapFileName = file.getString("map_file", mapFileName);
 		mapFile = new File(HiddenOre.getPlugin().getDataFolder(), mapFileName);
 		mapSave = file.getLong("map_save_ticks", mapSave);
-
-		layerNameSupplier = initLayerNameSupplier();
 
 		i.ignoreSilktouch = file.getBoolean("ignore_silktouch", i.ignoreSilktouch);
 
@@ -573,9 +565,6 @@ public final class Config {
 	public static BlockConfig isDropBlock(UUID world, BlockData block, Location blockLocation) {
 		List<BlockConfig> bcs = new ArrayList<>();
 
-		List<BlockConfig> lbcs = instance.layerConfigs.getOrDefault(Optional.ofNullable(layerNameSupplier.getLayerForLocation(blockLocation)).orElse(""), new HashMap<>()).getOrDefault(block.getMaterial().getKey(), new ArrayList<>());
-		if (lbcs != null) bcs.addAll(lbcs);
-
 		if (!bcs.isEmpty()) {
 			// return first match
 			return bcs.get(0);
@@ -632,9 +621,5 @@ public final class Config {
 
 	public static PlayerStateConfig getState(String state) {
 		return instance.stateMasterList.get(state);
-	}
-
-	private static LayerNameSupplier initLayerNameSupplier() {
-		return loc -> Features.INSTANCE.getLayers().getWorldManager().getLayers().values().stream().filter(layer -> layer.equals(LayerUtilsKt.getLayer(loc))).map(Layer::getId).findFirst().orElse("");
 	}
 }

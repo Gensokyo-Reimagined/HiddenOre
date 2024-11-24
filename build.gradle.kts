@@ -19,7 +19,5 @@ repositories {
 dependencies {
 	compileOnly(idofrontLibs.bundles.idofront.core)
 	compileOnly(hiddenlibs.minecraft.plugin.geary.papermc)
-	compileOnly(hiddenlibs.minecraft.plugin.blocky)
 	compileOnly(hiddenlibs.minecraft.plugin.deeperworld)
-	compileOnly(hiddenlibs.minecraft.plugin.mineinabyss)
 }

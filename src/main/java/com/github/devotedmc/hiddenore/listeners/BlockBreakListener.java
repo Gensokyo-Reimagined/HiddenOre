@@ -4,7 +4,6 @@ import com.github.devotedmc.hiddenore.*;
 import com.github.devotedmc.hiddenore.events.HiddenOreEvent;
 import com.github.devotedmc.hiddenore.events.HiddenOreGenerateEvent;
 import com.github.devotedmc.hiddenore.util.FakePlayer;
-import com.mineinabyss.blocky.api.BlockyBlocks;
 import com.mineinabyss.geary.modules.Geary;
 import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
 import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
@@ -370,9 +369,7 @@ public class BlockBreakListener implements Listener {
 					HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, walk, sampleData);
 					Bukkit.getPluginManager().callEvent(hoge);
 					if (!hoge.isCancelled()) {
-						if (prefabKey != null) {
-							BlockyBlocks.INSTANCE.placeBlockyBlock(walk.getLocation(), prefabKey);
-						} else walk.setBlockData(hoge.getTransform(), false);
+						walk.setBlockData(hoge.getTransform(), false);
 						expressed = hoge.getTransform();
 						cPlace --;
 						tryFacing = true;

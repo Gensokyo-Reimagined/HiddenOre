@@ -9,9 +9,6 @@ import com.github.devotedmc.hiddenore.tracking.BreakTracking;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mineinabyss.blocky.api.BlockyBlocks;
-import com.mineinabyss.geary.addons.GearyPhase;
-import com.mineinabyss.geary.modules.GearyModuleKt;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;

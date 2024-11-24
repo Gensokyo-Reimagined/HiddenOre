@@ -1,11 +1,7 @@
 package com.github.devotedmc.hiddenore;
 
-import com.mineinabyss.blocky.BlockyPlugin;
 import com.mineinabyss.geary.modules.Geary;
-import com.mineinabyss.geary.modules.GearyKt;
-import com.mineinabyss.geary.modules.GearyModuleKt;
 import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
-import com.mineinabyss.geary.papermc.datastore.namespacedkey.GearySerializersExtensionsKt;
 import com.mineinabyss.geary.papermc.datastore.namespacedkey.NamespacedKeyHelpersKt;
 import com.mineinabyss.geary.papermc.tracking.blocks.BlockTrackingKt;
 import com.mineinabyss.geary.papermc.tracking.blocks.BlockTrackingModule;

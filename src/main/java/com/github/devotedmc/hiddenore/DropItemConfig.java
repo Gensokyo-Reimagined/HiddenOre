@@ -3,7 +3,6 @@ package com.github.devotedmc.hiddenore;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mineinabyss.blocky.api.BlockyBlocks;
 import com.mineinabyss.geary.modules.Geary;
 import com.mineinabyss.geary.papermc.GearyPaperModuleKt;
 import com.mineinabyss.geary.papermc.datastore.DataStoreKt;
@@ -21,18 +20,10 @@ public class DropItemConfig {
 		Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGlobal();
 		this.template = template;
 		PrefabKey key = DataStoreKt.decodePrefabs(gearyWorld, template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
-		this.canTransform = (key != null && BlockyBlocks.INSTANCE.isBlockyBlock(gearyWorld, key)) || template.getType().isBlock();
+		this.canTransform = (key != null && template.getType().isBlock());
 	}
 	
 	public boolean canTransform() {
-		if (canTransform) return true;
-		else {
-			Geary gearyWorld = GearyPaperModuleKt.getGearyPaper().getWorldManager().getGlobal();
-			PrefabKey key = DataStoreKt.decodePrefabs(gearyWorld, template.getItemMeta().getPersistentDataContainer()).stream().findFirst().orElse(null);
-			if (key != null) {
-				return BlockyBlocks.INSTANCE.isBlockyBlock(gearyWorld, key);
-			}
-		}
 		return canTransform;
 	}
 	
