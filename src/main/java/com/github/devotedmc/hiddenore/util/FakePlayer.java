@@ -18,6 +18,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.*;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.sign.Side;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.entity.*;
@@ -3026,6 +3027,12 @@ public class FakePlayer implements Player {
 
 	@Override
 	public void openSign(Sign arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void openSign(@NotNull Sign sign, @NotNull Side side) {
 		// TODO Auto-generated method stub
 
 	}

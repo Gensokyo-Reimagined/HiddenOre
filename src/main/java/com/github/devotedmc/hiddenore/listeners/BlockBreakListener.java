@@ -360,6 +360,7 @@ public class BlockBreakListener implements Listener {
 					Bukkit.getPluginManager().callEvent(hoge);
 					if (!hoge.isCancelled()) {
 						walk.setType(hoge.getTransform());
+						//RAHHHH
 						expressed = hoge.getTransform();
 						cPlace --;
 						tryFacing = true;
