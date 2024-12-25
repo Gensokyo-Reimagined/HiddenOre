@@ -1,18 +1,11 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-	alias(libs.plugins.mia.kotlin.jvm)
-//	`java-library`
-	alias(libs.plugins.kotlinx.serialization)
-	alias(libs.plugins.mia.papermc)
-	alias(libs.plugins.mia.copyjar)
-	alias(libs.plugins.mia.publication)
-	alias(libs.plugins.mia.autoversion)
+	id("java")
+	id("maven-publish")
+	id("com.gradleup.shadow") version "8.3.5"
 }
 
-
 repositories {
-	maven("https://repo.mineinabyss.com/releases")
-	maven("https://repo.mineinabyss.com/snapshots")
+	maven("https://repo.papermc.io/repository/maven-public/")
 	maven("https://maven.enginehub.org/repo")
 	maven("https://repo.nexomc.com/releases")
 }
@@ -25,6 +18,28 @@ java {
 
 dependencies {
 	compileOnly(hiddenlibs.minecraft.plugin.worldguard)
-	compileOnly(hiddenlibs.minecraft.plugin.geary.papermc)
-	compileOnly("com.nexomc:nexo:0.4.0")
+	compileOnly(hiddenlibs.paperapi)
+	compileOnly(hiddenlibs.minecraft.plugin.nexo)
+}
+
+publishing {
+	publications {
+		create<MavenPublication>("mavenJava") {
+			groupId = "plugins"
+			artifact(tasks.shadowJar) {
+				artifactId = "HiddenOre"
+			}
+		}
+	}
+
+	repositories {
+		maven {
+			name = "gensokyoReimagined"
+			url = uri("https://repo.gensokyoreimagined.net")
+			credentials {
+				username = project.findProperty("gensokyoUser")?.toString() ?: System.getenv("GENSOKYOUSER")
+				password = project.findProperty("gensokyoToken")?.toString() ?: System.getenv("GENSOKYOTOKEN")
+			}
+		}
+	}
 }
