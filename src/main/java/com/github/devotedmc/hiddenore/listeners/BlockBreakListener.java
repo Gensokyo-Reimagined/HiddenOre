@@ -4,6 +4,11 @@ import com.github.devotedmc.hiddenore.*;
 import com.github.devotedmc.hiddenore.events.HiddenOreEvent;
 import com.github.devotedmc.hiddenore.events.HiddenOreGenerateEvent;
 import com.github.devotedmc.hiddenore.util.FakePlayer;
+import com.nexomc.nexo.api.NexoBlocks;
+import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.items.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -85,7 +90,7 @@ public class BlockBreakListener implements Listener {
 		// someone listening might object to our manipulation here.
 		if (bc != null && bc.suppressDrops) {
 			debug("Attempting to suppress break of tracked type {0}", blockName);
-			HiddenOreGenerateEvent hoges = new HiddenOreGenerateEvent(p, b, Material.AIR);
+			HiddenOreGenerateEvent hoges = new HiddenOreGenerateEvent(p, b, DropItemConfig.DropItemType.BUKKIT, Material.AIR);
 			Bukkit.getPluginManager().callEvent(hoges);
 			if (!hoges.isCancelled()) {
 				b.setType(Material.AIR);
@@ -236,7 +241,7 @@ public class BlockBreakListener implements Listener {
 			String dropName, DropConfig dropConfig, String blockName, BlockConfig blockConfig, StringBuilder alertBuffer) {
 		// Remove block, drop special drop and cancel the event
 		if (!clearBlock) {
-			HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, sourceBlock, Material.AIR);
+			HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, sourceBlock, DropItemConfig.DropItemType.BUKKIT, Material.AIR);
 			Bukkit.getPluginManager().callEvent(hoge);
 			if (!hoge.isCancelled()) {
 				sourceBlock.setType(Material.AIR);
@@ -317,6 +322,17 @@ public class BlockBreakListener implements Listener {
 		
 	}
 
+	/**
+	 *
+	 * @param items May be nexo
+	 * @param sourceLocation
+	 * @param player
+	 * @param dropName
+	 * @param blockName
+	 * @param blockConfig
+	 * @param alertBuffer
+	 * @param dropConfig
+	 */
 	private void doActualGenerate(final List<ItemStack> items, final Location sourceLocation, final Player player,
 			String dropName, String blockName, BlockConfig blockConfig, StringBuilder alertBuffer, DropConfig dropConfig) {
 		int maxWalk = 0;
@@ -327,8 +343,12 @@ public class BlockBreakListener implements Listener {
 		VeinConfig vc = dropConfig.getVeinNature();
 		Block origin = sourceLocation.getBlock();
 		for (ItemStack xform : items) {
-			Material sample = xform.getType();
-			Material expressed = sample;
+			DropItemConfig sample;
+			if(NexoBlocks.isCustomBlock(xform)){
+				sample=new DropItemConfig(NexoItems.idFromItem(xform));
+			}else{
+				sample=new DropItemConfig(xform);
+			}
 			forceFacing = (vc == null ? -1 : (vc.getForceVisibleTransform() ? 0 : -1 )); // do index traverse on visible faces
 			// to ensure overall fairness but density in discovery, we add walk attempts to cover forced facing reveal
 			// to make sure we test them all before moving on.
@@ -356,12 +376,13 @@ public class BlockBreakListener implements Listener {
 							(int) Math.round(u * z));
 				}
 				if (plugin.getTracking().testGen(walk.getLocation()) && blockConfig.checkGenerateBlock(walk)) {
-					HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, walk, sample);
+					HiddenOreGenerateEvent hoge = new HiddenOreGenerateEvent(player, walk, sample.getType(), switch(sample.getType()){ case NEXO -> sample.getNexoItem(); case BUKKIT -> sample.getBukkitItem().getType();});
 					Bukkit.getPluginManager().callEvent(hoge);
 					if (!hoge.isCancelled()) {
-						walk.setType(hoge.getTransform());
-						//RAHHHH
-						expressed = hoge.getTransform();
+						switch(hoge.getType()){
+							case NEXO -> NexoBlocks.place(hoge.getNexoBlock(), walk.getLocation());
+							case BUKKIT -> walk.setType(hoge.getBukkitMaterial());
+						}
 						cPlace --;
 						tryFacing = true;
 						plugin.getTracking().trackGen(walk.getLocation());
@@ -382,6 +403,22 @@ public class BlockBreakListener implements Listener {
 //						xform.getItemMeta().getDisplayName() : Config.getPrettyName(xform.getType().name());
 
 				String name = xform.getI18NDisplayName();
+
+				if(NexoItems.exists(xform)){
+					ItemBuilder itemBuilder = NexoItems.itemFromId(NexoItems.idFromItem(xform));
+					Component component = itemBuilder.getDisplayName();
+					if(component==null){
+						component = itemBuilder.getItemName();
+					}
+
+					if(component==null){
+						component = itemBuilder.build().displayName();
+					}
+
+					if(component!=null){
+						name = PlainTextComponentSerializer.plainText().serialize(component);
+					}
+				}
 
 //				log("STAT: Player {0} at {1} broke {2} - replacing with {3} {4} as {6}",
 //						player.getDisplayName(), player.getLocation(), blockName,

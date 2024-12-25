@@ -466,6 +466,9 @@ public final class Config {
 		@SuppressWarnings("unchecked")
 		List<ItemStack> items = (List<ItemStack>) drop.getList("package",
 				new ArrayList<ItemStack>());
+		@SuppressWarnings("unchecked")
+		List<String> nexoItems = (List<String>) drop.getList("nexoItems",
+				new ArrayList<String>());
 		boolean transformIfAble = drop.getBoolean("transformIfAble", false);
 		boolean transformDropIfFails = drop.getBoolean("transformDropIfFails", false);
 		int transformMaxDropsIfFails = drop.getInt("transformMaxDropsIfFails", 1);
@@ -490,7 +493,7 @@ public final class Config {
 					heightLength, densityLength, forceVisible);
 		}
 
-		DropConfig dc = new DropConfig(sourceDrop, DropItemConfig.transform(items), command,
+		DropConfig dc = new DropConfig(sourceDrop, DropItemConfig.transform(items,nexoItems), command,
 				transformIfAble, transformDropIfFails, transformMaxDropsIfFails,
 				dPrefix, grabLimits(drop, new DropLimitsConfig()), veinNature);
 
